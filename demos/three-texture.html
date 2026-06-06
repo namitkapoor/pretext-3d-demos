@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Three Texture — Pretext + Three.js</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #0d0d10; }
+    canvas { display: block; }
+    #controls {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      padding: 10px 20px;
+      backdrop-filter: blur(8px);
+    }
+    #controls label {
+      font: 500 11px/1 "Helvetica Neue", sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.35);
+      white-space: nowrap;
+    }
+    #width-slider {
+      width: 160px;
+      accent-color: rgba(255, 220, 160, 0.8);
+    }
+    #width-label {
+      font: 500 11px/1 "SF Mono", ui-monospace, monospace;
+      color: rgba(255, 220, 160, 0.7);
+      min-width: 38px;
+    }
+    #drag-hint {
+      position: fixed;
+      bottom: 80px;
+      left: 50%;
+      transform: translateX(-50%);
+      font: 500 10px/1 "Helvetica Neue", sans-serif;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.15);
+      pointer-events: none;
+      user-select: none;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <p id="drag-hint">Drag to rotate</p>
+  <div id="controls">
+    <label for="width-slider">Text width</label>
+    <input id="width-slider" type="range" min="200" max="680" value="540" step="4">
+    <span id="width-label">540px</span>
+  </div>
+  <script type="module" src="./three-texture.ts"></script>
+</body>
+</html>

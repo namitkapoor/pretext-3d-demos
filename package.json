@@ -1,0 +1,20 @@
+{
+  "name": "pretext-3d-demos",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Three.js experiments built on the Pretext DOM-free text layout library",
+  "type": "module",
+  "scripts": {
+    "start": "bun demos/index.html",
+    "capture": "node capture-demos.mjs"
+  },
+  "dependencies": {
+    "@chenglou/pretext": "^0.0.6",
+    "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "@types/three": "^0.184.0",
+    "playwright": "^1.59.1",
+    "typescript": "^6.0.2"
+  }
+}

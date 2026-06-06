@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pretext × Three.js Demos</title>
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    color-scheme: light;
+    --page: #f5f1ea;
+    --panel: #fffdf8;
+    --ink: #201b18;
+    --muted: #6d645d;
+    --rule: #d8cec3;
+    --accent: #955f3b;
+  }
+  body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(180deg, #fbf7f0 0%, var(--page) 100%);
+    color: var(--ink);
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  .page {
+    width: min(940px, calc(100vw - 32px));
+    margin: 0 auto;
+    padding: 32px 0 48px;
+  }
+  .eyebrow {
+    margin: 0 0 8px;
+    font: 12px/1.2 "SF Mono", ui-monospace, monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  h1 {
+    margin: 0;
+    font: 700 34px/1.08 Georgia, "Times New Roman", serif;
+  }
+  .intro {
+    margin: 10px 0 0;
+    max-width: 62ch;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 28px;
+  }
+  .card {
+    display: block;
+    padding: 18px;
+    border: 1px solid var(--rule);
+    border-radius: 20px;
+    background: color-mix(in srgb, var(--panel) 94%, white 6%);
+    color: inherit;
+    text-decoration: none;
+    box-shadow: 0 18px 40px rgb(54 40 23 / 0.08);
+    transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+  }
+  .card:hover {
+    transform: translateY(-1px);
+    border-color: color-mix(in srgb, var(--accent) 35%, var(--rule) 65%);
+    box-shadow: 0 22px 44px rgb(54 40 23 / 0.12);
+  }
+  .card h2 {
+    margin: 0;
+    font: 600 20px/1.2 "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  .card p {
+    margin: 10px 0 0;
+    line-height: 1.5;
+    color: var(--muted);
+  }
+  @media (max-width: 760px) {
+    .page {
+      width: min(100vw - 20px, 940px);
+      padding-top: 22px;
+    }
+    .grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <p class="eyebrow">Pretext × Three.js</p>
+    <h1>3D Text Demos</h1>
+    <p class="intro">
+      Experiments that take Pretext's DOM-free line layout and push it into 3D
+      space — words as physics particles, text on canvas textures wrapped over
+      meshes, cloth simulation, and a couple of standalone Three.js studies.
+    </p>
+
+    <section class="grid" aria-label="Demo list">
+      <a class="card" href="./three-interactive-card.html">
+        <h2>Interactive Card</h2>
+        <p>Word clusters as physics-based UI on a 3D surface. Nav items, headline, and body are independent spring clusters — hover lifts, click scatters, layout is the attractor.</p>
+      </a>
+
+      <a class="card" href="./three-words.html">
+        <h2>Three Words</h2>
+        <p>Words as interactive 3D particles — Pretext positions become spring attractors in Three.js space. Hover to lift, click to scatter.</p>
+      </a>
+
+      <a class="card" href="./three-texture.html">
+        <h2>Three Texture</h2>
+        <p>Pretext text layout rendered onto a live canvas texture mapped to a rotating 3D card. Drag the width slider to reflow in real time.</p>
+      </a>
+
+      <a class="card" href="./three-cloth.html">
+        <h2>Cloth Physics</h2>
+        <p>Pretext text as a canvas texture on an Ammo.js soft body cloth. The cloth hangs from a fixed top edge and ripples under oscillating wind forces.</p>
+      </a>
+
+      <a class="card" href="./three-glb-tshirt.html">
+        <h2>GLB T-Shirt Explorer</h2>
+        <p>Loads a GLB t-shirt, prints the full scene hierarchy with vertex counts, and assesses physics feasibility for each mesh.</p>
+      </a>
+
+      <a class="card" href="./pola-mothersday.html">
+        <h2>Pola Mother's Day</h2>
+        <p>Recreation of the Pola "We Care More" site — Three.js instanced bouquet with per-instance sine-wave float, scroll-driven camera, mouse parallax, and IntersectionObserver text reveal.</p>
+      </a>
+
+      <a class="card" href="./three-tshirt-physics.html">
+        <h2>T-Shirt Cloth Physics</h2>
+        <p>Verlet cloth simulation on a subsampled proxy mesh — deformation transfers back to the full 40k-vert shirt each frame via weighted nearest-proxy interpolation.</p>
+      </a>
+    </section>
+  </main>
+</body>
+</html>

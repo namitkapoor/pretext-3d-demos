@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLB T-Shirt Explorer — Three.js</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #111; }
+    canvas { display: block; }
+
+    /* ── Leva-style panel ─────────────────────────────────────────── */
+    #leva {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      width: 268px;
+      background: #1b1b1b;
+      border-radius: 8px;
+      box-shadow: 0 6px 40px rgba(0,0,0,0.6);
+      font: 11px/1.4 "SF Mono", ui-monospace, monospace;
+      color: #ccc;
+      z-index: 10;
+      overflow: hidden;
+    }
+    .lv-header {
+      padding: 10px 14px;
+      background: #242424;
+      color: #777;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .lv-header span { color: #444; font-size: 10px; }
+    .lv-section-title {
+      padding: 7px 14px 3px;
+      color: #555;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      border-top: 1px solid #222;
+    }
+    .lv-row {
+      display: flex;
+      align-items: center;
+      padding: 5px 14px;
+      gap: 8px;
+    }
+    .lv-label {
+      color: #aaa;
+      width: 72px;
+      flex-shrink: 0;
+      font-size: 11px;
+    }
+    .lv-value {
+      color: #e8e8e8;
+      font-size: 11px;
+      min-width: 42px;
+      text-align: right;
+    }
+    .lv-row input[type=range] {
+      flex: 1;
+      accent-color: #4a9eff;
+      height: 3px;
+    }
+    .lv-row input[type=checkbox] {
+      accent-color: #4a9eff;
+      width: 13px;
+      height: 13px;
+    }
+    .lv-btn {
+      flex: 1;
+      background: #2e2e2e;
+      border: 1px solid #3a3a3a;
+      border-radius: 4px;
+      color: #ccc;
+      padding: 4px 10px;
+      font: inherit;
+      cursor: pointer;
+      transition: background 120ms;
+    }
+    .lv-btn:hover { background: #383838; }
+    .lv-divider { height: 1px; background: #222; margin: 2px 0; }
+
+    /* ── Hierarchy panel ──────────────────────────────────────────── */
+    #hierarchy {
+      position: fixed;
+      top: 16px;
+      left: 16px;
+      max-width: 320px;
+      max-height: calc(100vh - 32px);
+      background: #1b1b1b;
+      border-radius: 8px;
+      box-shadow: 0 6px 40px rgba(0,0,0,0.6);
+      font: 11px/1.6 "SF Mono", ui-monospace, monospace;
+      color: #aaa;
+      z-index: 10;
+      overflow-y: auto;
+      padding: 10px 14px;
+    }
+    #hierarchy h3 {
+      color: #555;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    #hierarchy .node { padding-left: 12px; }
+    #hierarchy .mesh { color: #4a9eff; }
+    #hierarchy .group { color: #aaa; }
+    #hierarchy .mat { color: #f0a060; font-size: 10px; }
+    #hierarchy .verts { color: #60c060; font-size: 10px; }
+    #hierarchy .bone { color: #c060c0; }
+    #hierarchy .note {
+      margin-top: 10px;
+      padding: 8px;
+      background: #222;
+      border-radius: 4px;
+      color: #888;
+      font-size: 10px;
+      line-height: 1.5;
+    }
+    #hierarchy .ok { color: #60c060; }
+    #hierarchy .warn { color: #f0a060; }
+
+    #loading {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: #555;
+      font: 12px "Helvetica Neue", sans-serif;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <p id="loading">Loading GLB…</p>
+
+  <div id="leva">
+    <div class="lv-header">T-Shirt Explorer <span>▾</span></div>
+
+    <div class="lv-section-title">Camera</div>
+    <div class="lv-row">
+      <label class="lv-label">Distance</label>
+      <input id="cam-dist" type="range" min="0.5" max="12" value="3.5" step="0.05">
+      <span id="cam-dist-val" class="lv-value">3.50</span>
+    </div>
+    <div class="lv-row">
+      <label class="lv-label">Elevation</label>
+      <input id="cam-elev" type="range" min="-60" max="80" value="10" step="1">
+      <span id="cam-elev-val" class="lv-value">10°</span>
+    </div>
+    <div class="lv-row">
+      <label class="lv-label">Azimuth</label>
+      <input id="cam-azim" type="range" min="-180" max="180" value="0" step="1">
+      <span id="cam-azim-val" class="lv-value">0°</span>
+    </div>
+    <div class="lv-row">
+      <label class="lv-label">Target Y</label>
+      <input id="cam-ty" type="range" min="-2" max="2" value="0" step="0.05">
+      <span id="cam-ty-val" class="lv-value">0.00</span>
+    </div>
+    <div class="lv-row">
+      <button class="lv-btn" id="cam-reset">Reset</button>
+    </div>
+
+    <div class="lv-section-title">Debug</div>
+    <div class="lv-row">
+      <label class="lv-label">Wireframe</label>
+      <input id="wireframe" type="checkbox">
+    </div>
+    <div class="lv-row">
+      <label class="lv-label">Skeleton</label>
+      <input id="skeleton" type="checkbox">
+    </div>
+  </div>
+
+  <div id="hierarchy"><h3>Loading scene…</h3></div>
+
+  <script type="module" src="./three-glb-tshirt.ts"></script>
+</body>
+</html>

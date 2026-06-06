@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>T-Shirt Physics — Verlet Cloth</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; }
+    html, body { width: 100%; height: 100%; overflow: hidden; background: #0d0d14; }
+    canvas { display: block; }
+
+    #status {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: rgba(255,255,255,0.35);
+      font: 11px/1 "SF Mono", ui-monospace, monospace;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #controls {
+      position: fixed;
+      bottom: 28px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 9px;
+      flex-direction: column;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 16px;
+      padding: 14px 22px;
+      backdrop-filter: blur(10px);
+    }
+    .ctrl-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .ctrl-row label {
+      font: 500 11px/1 "Helvetica Neue", sans-serif;
+      letter-spacing: 0.10em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.32);
+      white-space: nowrap;
+      width: 52px;
+    }
+    .ctrl-row input[type=range] {
+      width: 144px;
+      accent-color: rgba(255,200,100,0.85);
+    }
+    .ctrl-row span {
+      font: 500 11px/1 "SF Mono", ui-monospace, monospace;
+      color: rgba(255,200,100,0.7);
+      min-width: 46px;
+    }
+
+    #hint {
+      position: fixed;
+      bottom: 116px;
+      left: 50%;
+      transform: translateX(-50%);
+      font: 500 10px/1 "Helvetica Neue", sans-serif;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.13);
+      pointer-events: none;
+      white-space: nowrap;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+  <p id="status">Loading…</p>
+  <p id="hint">Drag to orbit · Scroll to zoom</p>
+  <div id="controls">
+    <div class="ctrl-row">
+      <label>Wind</label>
+      <input id="wind-slider" type="range" min="0" max="10" value="3" step="0.1">
+      <span id="wind-val">3.0×</span>
+    </div>
+    <div class="ctrl-row">
+      <label>Stiffness</label>
+      <input id="stiff-slider" type="range" min="1" max="20" value="8" step="1">
+      <span id="stiff-val">8</span>
+    </div>
+  </div>
+  <script type="module" src="./three-tshirt-physics.ts"></script>
+</body>
+</html>

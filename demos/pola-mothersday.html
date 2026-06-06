@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You to All Mothers — We Care More</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #e8e6e1;
+      --ink: #1a1a1a;
+      --muted: #6b6460;
+      --accent: #c8321e;
+    }
+
+    html { scroll-behavior: auto; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
+      overflow-x: hidden;
+    }
+
+    /* ── Fixed canvas stage ──────────────────────────────── */
+    #gl {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: block;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Scroll container ────────────────────────────────── */
+    #scroll {
+      position: relative;
+      z-index: 1;
+      pointer-events: none; /* let scroll pass through to window */
+    }
+
+    /* ── Hero section ────────────────────────────────────── */
+    #hero {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      padding-bottom: 9vh;
+    }
+
+    #hero-title {
+      text-align: center;
+      font-size: clamp(18px, 2.8vw, 36px);
+      font-weight: 400;
+      letter-spacing: 0.12em;
+      color: var(--ink);
+      line-height: 1.6;
+      opacity: 0;
+      transform: translateY(18px);
+      transition: opacity 1.1s cubic-bezier(0.22,1,0.36,1), transform 1.1s cubic-bezier(0.22,1,0.36,1);
+    }
+    #hero-title.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    #scroll-indicator {
+      margin-top: 24px;
+      width: 32px; height: 32px;
+      border-radius: 50%;
+      border: 2px solid rgba(26,26,26,0.25);
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.6s ease;
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    #scroll-indicator::after {
+      content: '';
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: rgba(26,26,26,0.35);
+      animation: bobble 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.6; }
+      50% { transform: scale(1.12); opacity: 1; }
+    }
+    @keyframes bobble {
+      0%, 100% { transform: translateY(-3px); }
+      50% { transform: translateY(3px); }
+    }
+    #hero-title em {
+      font-style: normal;
+      font-size: 0.72em;
+      display: block;
+      letter-spacing: 0.2em;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    /* ── Copy sections ───────────────────────────────────── */
+    .copy-section {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px;
+    }
+
+    .copy-inner {
+      max-width: 520px;
+      text-align: center;
+    }
+
+    .copy-line {
+      display: block;
+      font-size: clamp(14px, 1.9vw, 22px);
+      line-height: 2.0;
+      letter-spacing: 0.04em;
+      color: var(--ink);
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.9s cubic-bezier(0.22,1,0.36,1),
+                  transform 0.9s cubic-bezier(0.22,1,0.36,1);
+    }
+
+    .copy-line.small {
+      font-size: clamp(12px, 1.5vw, 17px);
+      color: var(--muted);
+      line-height: 2.2;
+    }
+
+    .copy-line.large {
+      font-size: clamp(16px, 2.4vw, 30px);
+      letter-spacing: 0.08em;
+    }
+
+    .copy-line.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .copy-gap {
+      display: block;
+      height: 1.4em;
+    }
+
+    /* ── Closing section ─────────────────────────────────── */
+    #closing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 24px 120px;
+      text-align: center;
+    }
+
+    #closing .copy-line.large {
+      font-size: clamp(18px, 3vw, 40px);
+    }
+
+    /* ── Footer bar ──────────────────────────────────────── */
+    #footer {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 32px;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-top: 1px solid rgba(0,0,0,0.1);
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    #footer.visible { opacity: 1; transform: translateY(0); }
+    #footer a { color: inherit; text-decoration: none; }
+    #footer a:hover { color: var(--ink); }
+
+    /* ── Mouse parallax helper ───────────────────────────── */
+    body { cursor: default; }
+  </style>
+</head>
+<body>
+  <canvas id="gl"></canvas>
+
+  <div id="scroll">
+    <!-- Hero -->
+    <section id="hero">
+      <h1 id="hero-title">
+        <em>We Care More</em>
+        Thank you to all mothers.
+      </h1>
+      <div id="scroll-indicator"></div>
+    </section>
+
+    <!-- Section 1 -->
+    <section class="copy-section">
+      <div class="copy-inner">
+        <span class="copy-line large">Mom, thank you.</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line">Today, those feelings flow across the whole world.</span>
+        <span class="copy-line">We know there are people who cannot wholeheartedly</span>
+        <span class="copy-line">celebrate Mother's Day from their circumstances.</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line small">We're sorry.</span>
+        <span class="copy-line small">Even so — just once — we want to say it.</span>
+      </div>
+    </section>
+
+    <!-- Section 2 -->
+    <section class="copy-section">
+      <div class="copy-inner">
+        <span class="copy-line large">The shape of "mother" is not fixed.</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line">Whether or not there's a blood connection —</span>
+        <span class="copy-line">more than that, a mother doesn't even need to be a woman.</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line">As long as there is love.</span>
+        <span class="copy-line">Everyone who pours all the love they have into someone —</span>
+        <span class="copy-line">that is what a mother is.</span>
+      </div>
+    </section>
+
+    <!-- Section 3 -->
+    <section class="copy-section">
+      <div class="copy-inner">
+        <span class="copy-line">POLA has many mothers working here too.</span>
+        <span class="copy-line">Of course, there are those who chose not to become mothers.</span>
+        <span class="copy-line">And those who wanted to, but couldn't.</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line small">Those diverse lives and values</span>
+        <span class="copy-line small">are an irreplaceable treasure.</span>
+        <span class="copy-line small">We believe this deeply.</span>
+      </div>
+    </section>
+
+    <!-- Section 4 -->
+    <section class="copy-section">
+      <div class="copy-inner">
+        <span class="copy-line large">What can POLA do for mothers everywhere?</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line small">Creating spaces where all kinds of mothers can thrive.</span>
+        <span class="copy-line small">Extending our benefits to common-law and same-sex partnerships.</span>
+        <span class="copy-line small">Subsidizing fertility treatments and egg-freezing consultations.</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line small">And for mothers who carry an especially heavy load in raising children —</span>
+        <span class="copy-line small">some of our staff have begun volunteering their skills as estheticians.</span>
+      </div>
+    </section>
+
+    <!-- Closing -->
+    <section id="closing">
+      <div class="copy-inner">
+        <span class="copy-line large">How many shapes of love</span>
+        <span class="copy-line large">exist in that single word, "mother"?</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line">This I know for certain:</span>
+        <span class="copy-line">every single one is precious.</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line small">Today is Mother's Day.</span>
+        <span class="copy-line small">I am so glad you are with me.</span>
+        <span class="copy-gap"></span>
+        <span class="copy-line large">Thank you to all mothers.</span>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+      <a href="#">2029 Vision</a>
+      <a href="#">Company Info</a>
+      <span>We Care More. — POLA</span>
+    </footer>
+  </div>
+
+  <script type="module" src="./pola-mothersday.ts"></script>
+</body>
+</html>
