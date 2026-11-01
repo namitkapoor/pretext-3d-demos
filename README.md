@@ -54,7 +54,7 @@ Requires [Bun](https://bun.sh) — the demos use import attributes and direct
 
 ```sh
 bun install
-bun start          # serves demos/index.html with live bundling
+bun start          # serves every demos/*.html with live bundling
 ```
 
 Open the printed local URL and pick a demo from the landing page. To run a
@@ -64,14 +64,15 @@ single demo directly:
 bun demos/three-cloth.html
 ```
 
-## Capturing screenshots
-
-`capture-demos.mjs` is a Playwright script that walks a deployed demo index and
-saves screenshots + videos to `demo-captures/` (gitignored):
+## Building and deploying
 
 ```sh
-bun run capture
+bun run build      # static output in dist/
 ```
+
+`bun build` bundles each `demos/*.html` entrypoint and copies the hashed
+`.wasm` and `.glb` assets alongside. The site is deployed on Vercel
+(`vercel.json` sets `cleanUrls` so the extensionless demo links resolve).
 
 ## Implementation notes
 
