@@ -18,3 +18,4 @@ demo-captures
 # editors
 .idea
 .vscode
+.vercel
